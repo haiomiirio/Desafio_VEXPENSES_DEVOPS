@@ -1,53 +1,72 @@
 # Desafio_VEXPENSES_DEVOPS
 DESAFIO ONLINE
-  1° Tarefa
+  1° Descrição Técnica:<br><br>
 
-Provedor AWS: Configura a AWS como o ambiente onde os recursos serão criados e define em qual região eles serão provisionados.
-  VPC (Virtual Private Cloud): Cria uma rede privada para organizar e isolar os recursos, garantindo mais controle e segurança.
-  Subnets: Dentro dessa rede privada (VPC), cria uma subnet, que é uma subdivisão onde a instância EC2 será hospedada.
-  Security Group: Define as regras de segurança, controlando quem pode acessar a instância EC2 e quais portas estão liberadas, como a porta para acesso via SSH.
-  Key Pair: Usa um par de chaves para garantir que o acesso à instância EC2 seja feito de maneira segura via SSH.
-  Instância EC2: Cria um servidor virtual na AWS (a instância EC2) que já vem com o Nginx instalado e rodando automaticamente. Esse servidor é colocado na subnet e segue as regras de segurança definidas.
-  Output: Depois de criar a infraestrutura, o código exibe o endereço IP público da instância EC2, permitindo que você a acesse de forma remota.
+1 Provedor AWS: Define a região us-east-1 para a criação dos recursos.
+
+2 Variáveis: Duas variáveis (projeto e candidato) permitem personalizar os nomes dos recursos, facilitando a identificação.
+
+3 Chave Privada TLS: Uma chave privada é gerada para segurança e autenticação.
+
+4 IAM Role: Cria um papel de IAM que a instância EC2 poderá assumir, garantindo permissões específicas.
+
+5 IAM Instance Profile: Associa o papel de IAM à instância EC2 para que ela utilize essas permissões.
+
+6 VPC: Cria uma VPC, que é uma rede privada, para isolar os recursos e melhorar a segurança.
+
+7 Sub-rede: Dentro da VPC, é criada uma subnet onde a instância EC2 será alocada.
+
+8 Gateway de Internet: Permite que a VPC se conecte à Internet, permitindo acesso externo aos recursos.
+
+9 Tabela de Roteamento: Direciona o tráfego da subnet para o gateway de Internet, garantindo conectividade.
+
+10 Grupo de Segurança: Controla o acesso à instância EC2, permitindo conexões SSH apenas de um IP confiável.
+
+11 AMI: Busca a imagem mais recente do Debian 12 para garantir que a instância seja provisionada com uma versão atualizada do sistema operacional.
+
+12 Instância EC2: Cria uma instância EC2 do tipo t2.micro, equipada com Nginx, que é instalado automaticamente ao iniciar a instância.
+
+13 Logs de Fluxo da VPC: Ativa logs para monitorar o tráfego de rede, permitindo análises detalhadas sobre o que acontece na VPC.
+
+14 Grupo de Logs do CloudWatch: Cria um grupo de logs no CloudWatch para armazenar os logs de fluxo da VPC <br> <br>
+
+2° Descrição Técnica:<br><br>
+
+1.	Restringir Acesso SSH<br>
+	O código atualmente permite acesso SSH de qualquer lugar. Vamos restringir esse acesso a um IP confiável.<br>
+2.	Habilitar Criptografia no Volume EBS<br>
+ativar a criptografia no volume principal da instância EC2 para proteger os dados.<br>
+3.	Configurar Logs de Tráfego (VPC Flow Logs)<br>
+adicionar logs de tráfego para monitorar o fluxo de rede dentro da VPC.<br>
+4.	Automatizar a Instalação do Nginx<br>
+o	Adicionar um script para instalar e iniciar o Nginx automaticamente quando a instância EC2 for criada.<br>
+5.	Usar IAM Role em vez de Key Pair<br>
+o	Configurar uma IAM Role para a instância EC2, removendo o uso de chaves SSH.<br>
 
 
-2° Descrição
-
-1.	Restringir Acesso SSH
-o	O código atualmente permite acesso SSH de qualquer lugar. Vamos restringir esse acesso a um IP confiável.
-2.	Habilitar Criptografia no Volume EBS
-o	Vamos ativar a criptografia no volume principal da instância EC2 para proteger os dados.
-3.	Configurar Logs de Tráfego (VPC Flow Logs)
-o	Vamos adicionar logs de tráfego para monitorar o fluxo de rede dentro da VPC.
-4.	Automatizar a Instalação do Nginx
-o	Adicionar um script para instalar e iniciar o Nginx automaticamente quando a instância EC2 for criada.
-5.	Usar IAM Role em vez de Key Pair
-o	Configurar uma IAM Role para a instância EC2, removendo o uso de chaves SSH.
 
 
 
+Instruções para Usar o Terraform com a AWS<br>
+Pré-requisitos:<br>
 
+Instale o Terraform: Baixe e instale a versão mais recente do site do Terraform.<br>
+Crie uma Conta na AWS: Se ainda não tiver, crie uma conta na AWS e obtenha suas credenciais de acesso (Access Key e Secret Key).<br>
+Configure o Ambiente: Configure suas credenciais da AWS em ~/.aws/credentials ou defina variáveis de ambiente.<br>
+Dica de Segurança:<br>
 
-Instruções para Usar o Terraform com a AWS
-Pré-requisitos:
+Evite Usar a Conta Root da AWS: Sempre crie usuários com permissões específicas em vez de usar a conta root. Utilize o AWS Identity and Access Management (IAM) para gerenciar permissões e atribuir apenas as permissões necessárias a cada usuário.<br>
+Passos para Inicializar e Aplicar a Configuração<br>
+Crie uma Pasta do Projeto:<br>
 
-Instale o Terraform: Baixe e instale a versão mais recente do site do Terraform.
-Crie uma Conta na AWS: Se ainda não tiver, crie uma conta na AWS e obtenha suas credenciais de acesso (Access Key e Secret Key).
-Configure o Ambiente: Configure suas credenciais da AWS em ~/.aws/credentials ou defina variáveis de ambiente.
-Dica de Segurança:
+Digite o seguinte comando:<br>
+bash<br>
 
-Evite Usar a Conta Root da AWS: Sempre crie usuários com permissões específicas em vez de usar a conta root. Utilize o AWS Identity and Access Management (IAM) para gerenciar permissões e atribuir apenas as permissões necessárias a cada usuário.
-Passos para Inicializar e Aplicar a Configuração
-Crie uma Pasta do Projeto:
+mkdir meu-projeto-terraform<br>
+cd meu-projeto-terraform<br>
+Crie um Arquivo de Configuração:<br>
 
-Digite o seguinte comando:
-bash
-
-mkdir meu-projeto-terraform
-cd meu-projeto-terraform
-Crie um Arquivo de Configuração:
-
-Crie um arquivo chamado main.tf e adicione o seguinte código:
+Crie um arquivo chamado main.tf e adicione o seguinte código:<br>
 <br><br><br>
 
 
